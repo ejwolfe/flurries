@@ -9,7 +9,6 @@ pub fn setup_environment() {
     let file_path = ".env";
     let file = fs::read_to_string(file_path);
     if let Ok(contents) = file {
-        println!("{}", contents);
         parse_env_file(contents);
     } else {
         panic!("Environment file does not exist!");
