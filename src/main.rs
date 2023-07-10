@@ -1,4 +1,4 @@
-use flurries::{get_weather, setup_environment};
+use flurries::{get_forecast, get_weather, setup_environment};
 
 fn main() {
     let service = setup_environment();
@@ -16,4 +16,8 @@ fn main() {
         &weather.main.temp_max.round(),
         &weather.main.temp_min.round()
     );
+    let forecast = get_forecast(&service);
+    println!("");
+    println!("{}", &forecast.city.name);
+    println!("{}", &forecast.list[0].pop);
 }

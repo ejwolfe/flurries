@@ -4,7 +4,7 @@ mod fetchers;
 use std::env::var;
 
 use configuration::environment;
-use fetchers::open_weather_map_service::{CurrentWeather, OpenWeatherMapService};
+use fetchers::open_weather_map_service::{CurrentWeather, Forecast, OpenWeatherMapService};
 
 pub fn setup_environment() -> OpenWeatherMapService {
     environment::setup_environment();
@@ -17,6 +17,12 @@ pub fn get_weather(service: &OpenWeatherMapService) -> CurrentWeather {
     let zip_code = get_environment_variable(environment::ZIP_CODE_KEY);
     let country_code = get_environment_variable(environment::COUNTRY_CODE_KEY);
     service.request_weather(zip_code, country_code)
+}
+
+pub fn get_forecast(service: &OpenWeatherMapService) -> Forecast {
+    let zip_code = get_environment_variable(environment::ZIP_CODE_KEY);
+    let country_code = get_environment_variable(environment::COUNTRY_CODE_KEY);
+    service.request_forecast(zip_code, country_code)
 }
 
 fn get_environment_variable(key: &str) -> String {
