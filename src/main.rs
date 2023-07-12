@@ -1,8 +1,94 @@
+use clap::{Args, Parser, Subcommand};
 use colored::{Colorize, CustomColor};
-use flurries::{get_forecast, get_weather, setup_environment};
+// use flurries::{get_forecast, get_weather, setup_environment};
+
+#[derive(Parser)]
+#[command(author, version, about, arg_required_else_help = true)]
+struct Cli {
+    #[arg(
+        short,
+        long,
+        help = "Get the current weather conditions for the default location"
+    )]
+    current: bool,
+
+    #[arg(
+        short,
+        long,
+        help = "Get the forecasted weather conditions for the default location"
+    )]
+    forecast: bool,
+
+    #[command(subcommand)]
+    commands: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    #[command(about = "Get the current weather conditions for a custom location")]
+    Current(CurrentArgs),
+    #[command(about = "Get the forecasted weather conditions for a custom location")]
+    Forecast(ForecastArgs),
+}
+
+#[derive(Args)]
+struct CurrentArgs {
+    #[command(subcommand)]
+    command: CurrentCommands,
+}
+
+#[derive(Subcommand)]
+enum CurrentCommands {
+    #[command(about = "Search for the current weather conditions by zip code and country code")]
+    Zip(ZipArgs),
+    #[command(
+        about = "Search for the current weather conditions by city name, state code, and country code"
+    )]
+    City(CityArgs),
+}
+
+#[derive(Args)]
+struct ForecastArgs {
+    #[command(subcommand)]
+    command: ForecastCommands,
+}
+
+#[derive(Subcommand)]
+enum ForecastCommands {
+    #[command(about = "Search for the forecasted weather conditions by zip code and country code")]
+    Zip(ZipArgs),
+    #[command(
+        about = "Search for the forecasted weather conditions by city name, state code, and country code"
+    )]
+    City(CityArgs),
+}
+
+#[derive(Args)]
+#[command(arg_required_else_help = true)]
+struct ZipArgs {
+    #[arg(short, long, help = "Ex. D01")]
+    zip_code: String,
+    #[arg(short, long, help = "Ex. IE", default_value = "US")]
+    country: String,
+}
+
+#[derive(Args)]
+#[command(arg_required_else_help = true)]
+struct CityArgs {
+    #[arg(short, long, help = "Ex. New York City")]
+    name: String,
+    #[arg(short, long, help = "Ex. NY [disclaimer: Only avaliable in the USA]")]
+    state: Option<String>,
+    #[arg(short, long, help = "Ex. US", default_value = "US")]
+    country: String,
+}
 
 fn main() {
-    let service = setup_environment();
+    let cli: Cli = Cli::parse();
+
+    println!("current: {}", cli.current);
+    println!("forecast: {}", cli.forecast);
+    /* let service = setup_environment();
     let current_weather = get_weather(&service);
     let description = if current_weather.weather.len() > 0 {
         &current_weather.weather[0].description
@@ -26,8 +112,8 @@ fn main() {
     println!("");
     println!("{}", &forecast.city.name);
     println!("{}", &forecast.list[0].pop);
+    */
 }
-
 
 fn print_color(temp: f64) -> colored::ColoredString {
     let temp_string = temp.clone().to_string();
